@@ -11,11 +11,13 @@ import StatusBar from "./status-bar"
 
 type Status = "idle" | "valid" | "error"
 type Indent = 2 | 4 | "\t"
+type FontSize = 12 | 13 | 14 | 16 | 18
 
 export default function LinterTool() {
   const [input, setInput] = useState("")
   const [output, setOutput] = useState("")
   const [indent, setIndent] = useState<Indent>(2)
+  const [fontSize, setFontSize] = useState<FontSize>(14)
   const [status, setStatus] = useState<Status>("idle")
   const [error, setError] = useState<ParseError | null>(null)
 
@@ -63,8 +65,10 @@ export default function LinterTool() {
     <div className="flex flex-col border rounded-lg overflow-hidden bg-card">
       <Toolbar
         indent={indent}
+        fontSize={fontSize}
         output={output}
         onIndentChange={setIndent}
+        onFontSizeChange={setFontSize}
         onValidate={handleValidate}
         onFormat={handleFormat}
         onClear={handleClear}
@@ -74,11 +78,11 @@ export default function LinterTool() {
       <div className="hidden md:block" style={{ height: "60vh" }}>
         <Group orientation="horizontal">
           <Panel defaultSize={50} minSize={30}>
-            <InputPanel value={input} onChange={setInput} />
+            <InputPanel value={input} onChange={setInput} fontSize={fontSize} />
           </Panel>
           <Separator className="w-1 bg-border hover:bg-primary/30 transition-colors cursor-col-resize" />
           <Panel defaultSize={50} minSize={30}>
-            <OutputPanel output={output} />
+            <OutputPanel output={output} fontSize={fontSize} />
           </Panel>
         </Group>
       </div>
@@ -86,10 +90,10 @@ export default function LinterTool() {
       {/* Mobile: stacked panels */}
       <div className="md:hidden flex flex-col">
         <div className="h-[40vh] border-b">
-          <InputPanel value={input} onChange={setInput} />
+          <InputPanel value={input} onChange={setInput} fontSize={fontSize} />
         </div>
         <div className="h-[40vh]">
-          <OutputPanel output={output} />
+          <OutputPanel output={output} fontSize={fontSize} />
         </div>
       </div>
 

@@ -5,7 +5,7 @@
 
 @theme inline {
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-monaspace);
 
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -108,6 +108,13 @@
 .json-boolean     { color: var(--json-boolean); }
 .json-null        { color: var(--json-null); }
 .json-punctuation { color: var(--json-punctuation); }
+
+/* Force Monaspace into CodeMirror's internal DOM */
+.cm-editor .cm-content,
+.cm-editor .cm-line,
+.cm-editor .cm-scroller {
+  font-family: var(--font-mono), monospace !important;
+}
 
 /* Animation keyframes (mirrored from portfolio) */
 @keyframes fade-in-up {

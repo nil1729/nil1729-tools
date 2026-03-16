@@ -28,7 +28,7 @@ export default function Navigation() {
       <div className="container px-4 md:px-6 mx-auto">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="font-bold text-lg">
-            Nilanjan Deb — Tools
+            Nilanjan Deb / Tools
           </Link>
 
           <div className="flex items-center gap-3">
