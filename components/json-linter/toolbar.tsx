@@ -46,7 +46,7 @@ export default function Toolbar({
 
   const indentValue = indent === "\t" ? "tab" : String(indent)
 
-  const handleIndentChange = (value: string) => {
+  const handleIndentChange = (value: string | null) => {
     if (value === "tab") onIndentChange("\t")
     else if (value === "2") onIndentChange(2)
     else onIndentChange(4)

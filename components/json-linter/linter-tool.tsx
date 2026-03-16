@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels"
+import { Panel, Group, Separator } from "react-resizable-panels"
 import { formatJson, validateJson } from "@/lib/json-utils"
 import type { ParseError } from "@/lib/json-utils"
 import Toolbar from "./toolbar"
@@ -72,15 +72,15 @@ export default function LinterTool() {
 
       {/* Desktop: side-by-side resizable panels */}
       <div className="hidden md:block" style={{ height: "60vh" }}>
-        <PanelGroup direction="horizontal">
+        <Group orientation="horizontal">
           <Panel defaultSize={50} minSize={30}>
             <InputPanel value={input} onChange={setInput} />
           </Panel>
-          <PanelResizeHandle className="w-1 bg-border hover:bg-primary/30 transition-colors cursor-col-resize" />
+          <Separator className="w-1 bg-border hover:bg-primary/30 transition-colors cursor-col-resize" />
           <Panel defaultSize={50} minSize={30}>
             <OutputPanel output={output} />
           </Panel>
-        </PanelGroup>
+        </Group>
       </div>
 
       {/* Mobile: stacked panels */}
