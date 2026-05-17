@@ -4,7 +4,9 @@ import { useEffect, useState } from "react"
 import { useTheme } from "next-themes"
 import CodeMirror from "@uiw/react-codemirror"
 import { json } from "@codemirror/lang-json"
-import { githubLight, githubDark } from "@uiw/codemirror-theme-github"
+import { githubLight } from "@uiw/codemirror-theme-github"
+import { dracula } from "@uiw/codemirror-theme-dracula"
+import { EditorView } from "@codemirror/view"
 
 const PLACEHOLDER = `{
   "name": "Nilanjan",
@@ -28,11 +30,11 @@ export default function InputPanel({ value, onChange, fontSize }: InputPanelProp
     return (
       <div className="h-full overflow-auto">
         <textarea
-          className="w-full h-full min-h-[40vh] p-4 font-mono bg-transparent resize-none focus:outline-none"
-          style={{ fontSize: `${fontSize}px` }}
           value={value}
-          onChange={e => onChange(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
           placeholder={PLACEHOLDER}
+          className="w-full h-full p-4 font-mono bg-transparent resize-none focus:outline-none"
+          style={{ fontSize: `${fontSize}px` }}
         />
       </div>
     )
@@ -43,16 +45,16 @@ export default function InputPanel({ value, onChange, fontSize }: InputPanelProp
       <CodeMirror
         value={value}
         onChange={onChange}
-        extensions={[json()]}
-        theme={resolvedTheme === "dark" ? githubDark : githubLight}
         placeholder={PLACEHOLDER}
+        extensions={[json(), EditorView.lineWrapping]}
+        theme={resolvedTheme === "dark" ? dracula : githubLight}
         basicSetup={{
           lineNumbers: true,
           highlightActiveLine: true,
-          foldGutter: false,
+          foldGutter: true,
           autocompletion: false,
-          bracketMatching: false,
           closeBrackets: false,
+          bracketMatching: true,
         }}
         style={{ height: "100%", fontSize: `${fontSize}px` }}
         className="h-full font-mono"
