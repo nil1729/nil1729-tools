@@ -51,7 +51,7 @@ export default function InputPanel({ value, onChange, fontSize }: InputPanelProp
         basicSetup={{
           lineNumbers: true,
           highlightActiveLine: true,
-          foldGutter: false,
+          foldGutter: true,
           autocompletion: false,
           bracketMatching: true,
           closeBrackets: false,

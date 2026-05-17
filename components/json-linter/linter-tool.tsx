@@ -99,7 +99,7 @@ export default function LinterTool() {
         </div>
       </div>
 
-      <StatusBar status={status} error={error} />
+      <StatusBar status={status} error={error} input={input} />
     </div>
   )
 }
