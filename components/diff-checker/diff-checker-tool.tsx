@@ -243,7 +243,7 @@ export default function DiffCheckerTool() {
         {hasCompared && (
           <div className="flex items-center border rounded-md overflow-hidden ml-2">
             <button
-              className={`flex items-center gap-1 px-3 py-1.5 text-sm transition-colors ${
+              className={`flex items-center gap-1 px-3 py-1.5 text-sm transition-colors cursor-pointer ${
                 viewMode === "split"
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted/50 hover:bg-muted text-muted-foreground"
@@ -254,7 +254,7 @@ export default function DiffCheckerTool() {
               Side by Side
             </button>
             <button
-              className={`flex items-center gap-1 px-3 py-1.5 text-sm transition-colors ${
+              className={`flex items-center gap-1 px-3 py-1.5 text-sm transition-colors cursor-pointer ${
                 viewMode === "unified"
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted/50 hover:bg-muted text-muted-foreground"
