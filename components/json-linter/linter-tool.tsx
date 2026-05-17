@@ -13,8 +13,10 @@ type Status = "idle" | "valid" | "error"
 type Indent = 2 | 4 | "\t"
 type FontSize = 12 | 13 | 14 | 16 | 18
 
+const SAMPLE_JSON = `{"name":"Nilanjan","role":"Data Engineer","tools":["Spark","Kafka","Iceberg"],"config":{"env":"production","debug":false,"maxRetries":3}}`
+
 export default function LinterTool() {
-  const [input, setInput] = useState("")
+  const [input, setInput] = useState(SAMPLE_JSON)
   const [output, setOutput] = useState("")
   const [indent, setIndent] = useState<Indent>(2)
   const [fontSize, setFontSize] = useState<FontSize>(14)
