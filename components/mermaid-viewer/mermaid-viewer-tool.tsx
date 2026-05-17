@@ -89,44 +89,43 @@ export default function MermaidViewerTool() {
     if (!svg) return
 
     try {
-      // Create a canvas and render SVG onto it
-      const svgBlob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" })
-      const url = URL.createObjectURL(svgBlob)
+      // Convert SVG to a data URL to avoid canvas taint (blob URLs are cross-origin)
+      const svgData = new Blob([svg], { type: "image/svg+xml;charset=utf-8" })
+      const reader = new FileReader()
+      reader.onload = () => {
+        const dataUrl = reader.result as string
 
-      const img = new window.Image()
-      img.onload = () => {
-        // Use 2x scale for crisp output
-        const scale = 2
-        const canvas = document.createElement("canvas")
-        canvas.width = img.naturalWidth * scale
-        canvas.height = img.naturalHeight * scale
-        const ctx = canvas.getContext("2d")
-        if (!ctx) return
+        const img = new window.Image()
+        img.onload = () => {
+          const scale = 2
+          const canvas = document.createElement("canvas")
+          canvas.width = img.naturalWidth * scale
+          canvas.height = img.naturalHeight * scale
+          const ctx = canvas.getContext("2d")
+          if (!ctx) return
 
-        // White background
-        ctx.fillStyle = "#ffffff"
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-        ctx.scale(scale, scale)
-        ctx.drawImage(img, 0, 0)
+          ctx.fillStyle = "#ffffff"
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+          ctx.scale(scale, scale)
+          ctx.drawImage(img, 0, 0)
 
-        canvas.toBlob((blob) => {
-          if (!blob) return
-          const pngUrl = URL.createObjectURL(blob)
-          const a = document.createElement("a")
-          a.href = pngUrl
-          a.download = "diagram.png"
-          a.click()
-          URL.revokeObjectURL(pngUrl)
-          toast.success("PNG downloaded")
-        }, "image/png")
-
-        URL.revokeObjectURL(url)
+          canvas.toBlob((blob) => {
+            if (!blob) return
+            const pngUrl = URL.createObjectURL(blob)
+            const a = document.createElement("a")
+            a.href = pngUrl
+            a.download = "diagram.png"
+            a.click()
+            URL.revokeObjectURL(pngUrl)
+            toast.success("PNG downloaded")
+          }, "image/png")
+        }
+        img.onerror = () => {
+          toast.error("Failed to generate PNG")
+        }
+        img.src = dataUrl
       }
-      img.onerror = () => {
-        URL.revokeObjectURL(url)
-        toast.error("Failed to generate PNG")
-      }
-      img.src = url
+      reader.readAsDataURL(svgData)
     } catch {
       toast.error("Failed to generate PNG")
     }
