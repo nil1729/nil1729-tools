@@ -1,23 +1,106 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useEffect, useRef, useState } from "react"
 
 interface MarkdownRendererProps {
   content: string
 }
 
-/**
- * Lightweight Markdown → HTML renderer. Handles the most common GFM features.
- * No external dependency — keeps the bundle small.
- */
+interface MermaidBlockProps {
+  code: string
+  id: string
+}
+
+function MermaidBlock({ code, id }: MermaidBlockProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [svg, setSvg] = useState("")
+  const [error, setError] = useState("")
+
+  useEffect(() => {
+    let cancelled = false
+
+    const renderMermaid = async () => {
+      // @ts-expect-error mermaid loaded from CDN
+      if (!window.mermaid) {
+        await new Promise<void>((resolve, reject) => {
+          // @ts-expect-error mermaid loaded from CDN
+          if (window.mermaid) { resolve(); return }
+          const existing = document.querySelector('script[src*="mermaid"]')
+          if (existing) {
+            existing.addEventListener("load", () => resolve())
+            return
+          }
+          const script = document.createElement("script")
+          script.src = "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"
+          script.onload = () => {
+            // @ts-expect-error mermaid loaded from CDN
+            window.mermaid.initialize({
+              startOnLoad: false,
+              theme: document.documentElement.classList.contains("dark") ? "dark" : "default",
+              securityLevel: "loose",
+            })
+            resolve()
+          }
+          script.onerror = reject
+          document.head.appendChild(script)
+        })
+      }
+
+      try {
+        // @ts-expect-error mermaid loaded from CDN
+        const { svg: rendered } = await window.mermaid.render(`md-mermaid-${id}`, code)
+        if (!cancelled) {
+          setSvg(rendered)
+          setError("")
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : "Mermaid render error")
+          setSvg("")
+        }
+      }
+    }
+
+    renderMermaid()
+    return () => { cancelled = true }
+  }, [code, id])
+
+  if (error) {
+    return (
+      <div className="border border-destructive/30 rounded p-3 text-sm text-destructive bg-destructive/5 my-3">
+        <span className="font-medium">Mermaid Error:</span> {error}
+      </div>
+    )
+  }
+
+  if (!svg) {
+    return (
+      <div className="border rounded p-4 my-3 text-center text-muted-foreground text-sm animate-pulse">
+        Rendering diagram...
+      </div>
+    )
+  }
+
+  return (
+    <div
+      ref={containerRef}
+      className="my-3 flex justify-center overflow-x-auto"
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
+  )
+}
+
 function parseMarkdown(md: string): string {
   let html = md
 
   // Escape HTML entities
   html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 
-  // Code blocks (fenced)
+  // Code blocks (fenced) — mark mermaid blocks with special placeholder
   html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_match, lang, code) => {
+    if (lang === "mermaid") {
+      return `<div data-mermaid-code="${encodeURIComponent(code.trim())}"></div>`
+    }
     return `<pre class="md-codeblock"><code class="language-${lang}">${code.trim()}</code></pre>`
   })
 
@@ -77,16 +160,42 @@ function parseMarkdown(md: string): string {
 }
 
 export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
-  const html = useMemo(() => parseMarkdown(content), [content])
+  const parsed = useMemo(() => parseMarkdown(content), [content])
+
+  // Extract mermaid blocks and split the HTML
+  const segments = useMemo(() => {
+    const parts: Array<{ type: "html"; content: string } | { type: "mermaid"; code: string; id: string }> = []
+    const regex = /<div data-mermaid-code="([^"]+)"><\/div>/g
+    let lastIndex = 0
+    let match
+    let mermaidIdx = 0
+
+    while ((match = regex.exec(parsed)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push({ type: "html", content: parsed.slice(lastIndex, match.index) })
+      }
+      parts.push({ type: "mermaid", code: decodeURIComponent(match[1]), id: `${mermaidIdx++}` })
+      lastIndex = match.index + match[0].length
+    }
+    if (lastIndex < parsed.length) {
+      parts.push({ type: "html", content: parsed.slice(lastIndex) })
+    }
+    return parts
+  }, [parsed])
 
   if (!content.trim()) {
     return <p className="text-muted-foreground italic">Preview will appear here...</p>
   }
 
   return (
-    <div
-      className="md-body prose prose-sm dark:prose-invert max-w-none"
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
+    <div className="md-body prose prose-sm dark:prose-invert max-w-none">
+      {segments.map((seg, idx) =>
+        seg.type === "html" ? (
+          <div key={idx} dangerouslySetInnerHTML={{ __html: seg.content }} />
+        ) : (
+          <MermaidBlock key={idx} code={seg.code} id={seg.id} />
+        )
+      )}
+    </div>
   )
 }

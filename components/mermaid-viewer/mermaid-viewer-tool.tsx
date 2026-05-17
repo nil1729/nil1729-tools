@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { Panel, Group, Separator } from "react-resizable-panels"
 import { Button } from "@/components/ui/button"
-import { Copy, Trash2, Download, AlertCircle } from "lucide-react"
+import { Copy, Trash2, Download, AlertCircle, Image } from "lucide-react"
 import { toast } from "sonner"
 
 const SAMPLE_MERMAID = `graph TD
@@ -85,6 +85,53 @@ export default function MermaidViewerTool() {
     toast.success("SVG downloaded")
   }
 
+  const handleDownloadPng = async () => {
+    if (!svg) return
+
+    try {
+      // Create a canvas and render SVG onto it
+      const svgBlob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" })
+      const url = URL.createObjectURL(svgBlob)
+
+      const img = new window.Image()
+      img.onload = () => {
+        // Use 2x scale for crisp output
+        const scale = 2
+        const canvas = document.createElement("canvas")
+        canvas.width = img.naturalWidth * scale
+        canvas.height = img.naturalHeight * scale
+        const ctx = canvas.getContext("2d")
+        if (!ctx) return
+
+        // White background
+        ctx.fillStyle = "#ffffff"
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.scale(scale, scale)
+        ctx.drawImage(img, 0, 0)
+
+        canvas.toBlob((blob) => {
+          if (!blob) return
+          const pngUrl = URL.createObjectURL(blob)
+          const a = document.createElement("a")
+          a.href = pngUrl
+          a.download = "diagram.png"
+          a.click()
+          URL.revokeObjectURL(pngUrl)
+          toast.success("PNG downloaded")
+        }, "image/png")
+
+        URL.revokeObjectURL(url)
+      }
+      img.onerror = () => {
+        URL.revokeObjectURL(url)
+        toast.error("Failed to generate PNG")
+      }
+      img.src = url
+    } catch {
+      toast.error("Failed to generate PNG")
+    }
+  }
+
   const handleClear = () => {
     setInput("")
     setSvg("")
@@ -100,6 +147,9 @@ export default function MermaidViewerTool() {
         </Button>
         <Button size="sm" variant="outline" onClick={handleDownloadSvg} disabled={!svg}>
           <Download className="h-4 w-4 mr-1" /> SVG
+        </Button>
+        <Button size="sm" variant="outline" onClick={handleDownloadPng} disabled={!svg}>
+          <Image className="h-4 w-4 mr-1" /> PNG
         </Button>
         <Button size="sm" variant="outline" onClick={handleClear}>
           <Trash2 className="h-4 w-4 mr-1" /> Clear

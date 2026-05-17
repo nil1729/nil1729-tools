@@ -7,6 +7,9 @@ import { Copy, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 import MarkdownRenderer from "./markdown-renderer"
 
+const TICK = "`"
+const FENCE = TICK.repeat(3)
+
 const SAMPLE_MD = [
   "# Hello World",
   "",
@@ -18,15 +21,28 @@ const SAMPLE_MD = [
   "- Code blocks with syntax hints",
   "- Task lists",
   "- Blockquotes",
+  "- Mermaid diagrams \uD83E\uDDDC\u200D\u2640\uFE0F",
   "",
   "### Code Example",
   "",
-  "\x60\x60\x60javascript",
+  FENCE + "javascript",
   "const greet = (name) => {",
   '  return "Hello, " + name + "!";',
   "};",
   'console.log(greet("Developer"));',
-  "\x60\x60\x60",
+  FENCE,
+  "",
+  "### Mermaid Diagram",
+  "",
+  FENCE + "mermaid",
+  "graph LR",
+  "    A[Markdown] --> B[Parser]",
+  "    B --> C{Has Mermaid?}",
+  "    C -->|Yes| D[Render Diagram]",
+  "    C -->|No| E[Render HTML]",
+  "    D --> F[Preview]",
+  "    E --> F",
+  FENCE,
   "",
   "### Table",
   "",
