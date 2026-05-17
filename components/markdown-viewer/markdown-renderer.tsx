@@ -93,16 +93,22 @@ function MermaidBlock({ code, id }: MermaidBlockProps) {
 function parseMarkdown(md: string): string {
   let html = md
 
-  // Escape HTML entities
-  html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-
-  // Code blocks (fenced) — mark mermaid blocks with special placeholder
+  // Extract code blocks FIRST (before HTML escaping corrupts their content)
+  const codeBlocks: string[] = []
   html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_match, lang, code) => {
     if (lang === "mermaid") {
-      return `<div data-mermaid-code="${encodeURIComponent(code.trim())}"></div>`
+      const placeholder = `%%CODEBLOCK_${codeBlocks.length}%%`
+      codeBlocks.push(`<div data-mermaid-code="${encodeURIComponent(code.trim())}"></div>`)
+      return placeholder
     }
-    return `<pre class="md-codeblock"><code class="language-${lang}">${code.trim()}</code></pre>`
+    const escaped = code.trim().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    const placeholder = `%%CODEBLOCK_${codeBlocks.length}%%`
+    codeBlocks.push(`<pre class="md-codeblock"><code class="language-${lang}">${escaped}</code></pre>`)
+    return placeholder
   })
+
+  // Escape HTML entities in remaining content
+  html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 
   // Inline code
   html = html.replace(/`([^`]+)`/g, '<code class="md-inline-code">$1</code>')
@@ -155,6 +161,11 @@ function parseMarkdown(md: string): string {
 
   // Paragraphs — wrap remaining loose text
   html = html.replace(/^(?!<[a-z/])(\S.+)$/gm, '<p class="md-p">$1</p>')
+
+  // Restore code blocks from placeholders
+  codeBlocks.forEach((block, i) => {
+    html = html.replace(`%%CODEBLOCK_${i}%%`, block)
+  })
 
   return html
 }
