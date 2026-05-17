@@ -5,6 +5,7 @@ import { useTheme } from "next-themes"
 import CodeMirror from "@uiw/react-codemirror"
 import { json } from "@codemirror/lang-json"
 import { githubLight, githubDark } from "@uiw/codemirror-theme-github"
+import { EditorView } from "@codemirror/view"
 
 const PLACEHOLDER = `{
   "name": "Nilanjan",
@@ -43,7 +44,7 @@ export default function InputPanel({ value, onChange, fontSize }: InputPanelProp
       <CodeMirror
         value={value}
         onChange={onChange}
-        extensions={[json()]}
+        extensions={[json(), EditorView.lineWrapping]}
         theme={resolvedTheme === "dark" ? githubDark : githubLight}
         placeholder={PLACEHOLDER}
         basicSetup={{

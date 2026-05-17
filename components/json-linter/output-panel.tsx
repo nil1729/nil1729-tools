@@ -28,7 +28,7 @@ export default function OutputPanel({ output, fontSize }: OutputPanelProps) {
 
   return (
     <div className="h-full overflow-auto">
-      <pre className="p-4 font-mono whitespace-pre leading-relaxed" style={{ fontSize: `${fontSize}px` }}>
+      <pre className="p-4 font-mono whitespace-pre-wrap break-all leading-relaxed" style={{ fontSize: `${fontSize}px` }}>
         {tokens.map((token, index) => {
           const cls = TOKEN_CLASS[token.type]
           return cls
