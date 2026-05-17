@@ -138,6 +138,21 @@
   font-family: var(--font-mono), monospace !important;
 }
 
+/* Always show fold gutter markers (not just on hover) */
+.cm-editor .cm-foldGutter .cm-gutterElement {
+  visibility: visible !important;
+  min-width: 14px;
+  text-align: center;
+  cursor: pointer;
+  padding: 0 2px;
+  color: inherit;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+.cm-editor .cm-foldGutter .cm-gutterElement:hover {
+  opacity: 1;
+}
+
 /* Animation keyframes (mirrored from portfolio) */
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(20px); }

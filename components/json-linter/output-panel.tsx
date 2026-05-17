@@ -50,7 +50,6 @@ export default function OutputPanel({ output, fontSize }: OutputPanelProps) {
           highlightActiveLine: false,
           foldGutter: true,
           autocompletion: false,
-          bracketMatching: true,
           closeBrackets: false,
         }}
         style={{ height: "100%", fontSize: `${fontSize}px` }}
