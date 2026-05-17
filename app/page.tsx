@@ -1,4 +1,4 @@
-import { FileJson, Binary, Link2, KeyRound, GitCompare, FileText, Workflow } from "lucide-react"
+import { FileJson, Binary, Link2, KeyRound, GitCompare, FileText, Workflow, Regex, ArrowRightLeft, Clock, Hash, Palette, Timer } from "lucide-react"
 import ToolCard from "@/components/tool-card"
 
 export default function HomePage() {
@@ -26,6 +26,42 @@ export default function HomePage() {
             description="Compare two texts side-by-side with highlighted additions and deletions."
           />
           <ToolCard
+            href="/regex-tester"
+            icon={Regex}
+            name="Regex Tester"
+            description="Test regular expressions with live matching, capture groups, and flag toggles."
+          />
+          <ToolCard
+            href="/yaml-json"
+            icon={ArrowRightLeft}
+            name="YAML ↔ JSON Converter"
+            description="Convert between YAML and JSON formats instantly. Bidirectional with swap."
+          />
+          <ToolCard
+            href="/timestamp"
+            icon={Clock}
+            name="Unix Timestamp Converter"
+            description="Convert between Unix timestamps and human-readable dates with live clock."
+          />
+          <ToolCard
+            href="/hash-generator"
+            icon={Hash}
+            name="Hash Generator"
+            description="Generate MD5, SHA-1, SHA-256, SHA-512 hashes using Web Crypto API."
+          />
+          <ToolCard
+            href="/color-converter"
+            icon={Palette}
+            name="Color Converter"
+            description="Convert between HEX, RGB, and HSL with live preview and WCAG contrast check."
+          />
+          <ToolCard
+            href="/cron-parser"
+            icon={Timer}
+            name="Cron Expression Parser"
+            description="Parse cron expressions into plain English with next scheduled run times."
+          />
+          <ToolCard
             href="/markdown-viewer"
             icon={FileText}
             name="Markdown Viewer"
@@ -35,7 +71,7 @@ export default function HomePage() {
             href="/mermaid-viewer"
             icon={Workflow}
             name="Mermaid Viewer"
-            description="Write Mermaid diagram syntax and see it rendered live. Export as SVG."
+            description="Write Mermaid diagram syntax and see it rendered live. Export as SVG or PNG."
           />
           <ToolCard
             href="/base64"
