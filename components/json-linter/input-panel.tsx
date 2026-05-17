@@ -4,7 +4,8 @@ import { useEffect, useState } from "react"
 import { useTheme } from "next-themes"
 import CodeMirror from "@uiw/react-codemirror"
 import { json } from "@codemirror/lang-json"
-import { githubLight, githubDark } from "@uiw/codemirror-theme-github"
+import { githubLight } from "@uiw/codemirror-theme-github"
+import { dracula } from "@uiw/codemirror-theme-dracula"
 import { EditorView } from "@codemirror/view"
 
 const PLACEHOLDER = `{
@@ -45,14 +46,14 @@ export default function InputPanel({ value, onChange, fontSize }: InputPanelProp
         value={value}
         onChange={onChange}
         extensions={[json(), EditorView.lineWrapping]}
-        theme={resolvedTheme === "dark" ? githubDark : githubLight}
+        theme={resolvedTheme === "dark" ? dracula : githubLight}
         placeholder={PLACEHOLDER}
         basicSetup={{
           lineNumbers: true,
           highlightActiveLine: true,
           foldGutter: false,
           autocompletion: false,
-          bracketMatching: false,
+          bracketMatching: true,
           closeBrackets: false,
         }}
         style={{ height: "100%", fontSize: `${fontSize}px` }}
