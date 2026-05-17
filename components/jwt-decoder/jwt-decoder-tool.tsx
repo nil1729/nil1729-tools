@@ -271,7 +271,7 @@ export default function JwtDecoderTool() {
               <p className="text-sm text-muted-foreground">
                 Enter the secret used to sign the JWT to verify its authenticity:
               </p>
-              <div className="flex gap-2">
+              <div className="flex items-stretch gap-2">
                 <input
                   type="text"
                   className="flex-1 px-3 py-2 border rounded-md font-mono text-sm bg-transparent focus:outline-none focus:ring-2 focus:ring-ring"
@@ -280,7 +280,7 @@ export default function JwtDecoderTool() {
                   placeholder="your-256-bit-secret"
                   spellCheck={false}
                 />
-                <Button size="sm" onClick={handleVerify} disabled={!secret.trim()}>
+                <Button className="h-auto px-4" onClick={handleVerify} disabled={!secret.trim()}>
                   <KeyRound className="h-4 w-4 mr-1" /> Verify
                 </Button>
               </div>
